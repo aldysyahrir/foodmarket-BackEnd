@@ -1,0 +1,12 @@
+DATABASE
+ users
+ -id
+ -name => string
+ -email => string
+ -password => password
+ -phone => number
+ -address => string
+ -house_number => string
+ -city => string
+ -avatar => string
+ -rules => enum [admin, user]
