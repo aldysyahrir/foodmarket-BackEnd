@@ -1,15 +1,13 @@
 const bcrypt = require('bcrypt')
 const Validator = require('fastest-validator')
 const { Users } = require("../../../models");
-const deleteAvatar = require('../../../utils/deleteAvatar');
 
 const v = new Validator();
+const saveImage = require("../../../utils/saveImage");
 
 module.exports = async (req, res, next) => {
-    const  image  = req.user?.image ?? ""
-    const avatar = `${req.get("host")}/images/${image}`;
-    try {
 
+    try {
 
         const schema = {
             name: "string|empty:false",
@@ -27,7 +25,6 @@ module.exports = async (req, res, next) => {
         const validate = v.validate(req.body, schema)
 
         if (validate.length) {
-            deleteAvatar(avatar, res)
             return res.status(400).json({
                 status: "error",
                 key: "REGISTER",
@@ -42,7 +39,6 @@ module.exports = async (req, res, next) => {
         })
 
         if (user) {
-            deleteAvatar(avatar, res)
             return res.status(400).json({
                 status: "error",
                 key: "REGISTER",
@@ -52,7 +48,7 @@ module.exports = async (req, res, next) => {
 
         const password = await bcrypt.hash(req.body.password, 10)
         const { name, email, phone, address, house_number, city } = req.body;
-
+        const avatar = await saveImage(req.body.avatar, res);
 
         const data = {
             name,
@@ -65,10 +61,10 @@ module.exports = async (req, res, next) => {
             avatar,
             rules: req.body.rules ?? "user"
         };
-
+        console.log('data', data)
         const createUsers = await Users.create(data);
 
-        req.user.data = createUsers
+        req.user = {data: createUsers.dataValues}
         return next()
 
         //   return res.json({
@@ -78,7 +74,6 @@ module.exports = async (req, res, next) => {
         // });
 
     } catch (error) {
-        deleteAvatar(avatar, res)
         return res.json({
             status: "error",
             message: error.message,

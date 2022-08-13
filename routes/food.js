@@ -2,12 +2,15 @@ const express = require('express');
 const router = express.Router();
 
 //middleware
-const saveAvatar = require("../middlewares/saveAvatar");
 
 //handler
 const foodHandler = require("./handler/food");
 
 //router
-router.post("/", saveAvatar, foodHandler.create);
+router.post("/", foodHandler.create);
+router.get("/:id", foodHandler.get);
+router.get("/", foodHandler.getAll);
+router.delete("/:id", foodHandler.destroy);
+router.put("/:id", foodHandler.update);
 
 module.exports = router
