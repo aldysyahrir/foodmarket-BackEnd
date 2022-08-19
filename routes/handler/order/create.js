@@ -3,7 +3,7 @@ const v = new Validator();
 
 const { Order, Food, Users } = require("../../../models");
 
-module.exports = async (req, res) => {
+module.exports = async (req, res, next) => {
     try {
         const { food_id, user_id, amount } = req.body
 
@@ -55,14 +55,16 @@ module.exports = async (req, res) => {
             transaction_code: transactionCode,
         }
 
-        console.log('data', data)
         const orderData = await Order.create(data);
 
-        return res.json({
-            status: "success",
-            key: "CREATE_DATA",
-            message: orderData,
-        })
+        req.user = { order: orderData, user, food};
+        return next();
+
+        // return res.json({
+        //     status: "success",
+        //     key: "CREATE_DATA",
+        //     message: orderData,
+        // })
 
     } catch (error) {
         return res.status(500).json({

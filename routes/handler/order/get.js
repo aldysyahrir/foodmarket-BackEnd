@@ -1,19 +1,18 @@
-const { Order, Food } = require("../../../models");
+const { Order, Food, Users } = require("../../../models");
 
 module.exports = async (req, res) => {
     try {
-        const { status } = req.query;
-        const query = status === "1" ? { status: "waiting" }
-            : { status: ["success", "canceled"] }
+        const { id } = req.params;
 
-        const foodAttributes = ["title", "price", "picture",]
+        const userAttributes = ["name", "phone", "address", "house_number", "city"]
+        const foodAttributes = ["title", "price"]
 
-        const order = await Order.findAll({
-            where: query,
+        const order = await Order.findByPk(id, {
             include: [
                 { model: Food, as: "food", attributes: foodAttributes },
+                { model: Users, as: "user", attributes: userAttributes },
             ],
-        });
+        })
 
         return res.json({
             status: "success",
@@ -27,4 +26,4 @@ module.exports = async (req, res) => {
             message: error.message,
         });
     }
-}
+};

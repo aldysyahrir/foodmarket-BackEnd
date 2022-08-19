@@ -1,42 +1,58 @@
+const Sequelize = require("sequelize")
+
 module.exports = (sequelize, DataTypes) => {
     const Order = sequelize.define("Order", {
         id: {
-            allowNull: false,
+            type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
-            type: DataTypes.INTEGER
+            allowNull: false,
         },
         food_id: {
+            type: DataTypes.INTEGER,
             allowNull: false,
-            type: DataTypes.INTEGER
         },
         user_id: {
+            type: DataTypes.INTEGER,
             allowNull: false,
-            type: DataTypes.INTEGER
         },
         amount: {
+            type: DataTypes.INTEGER,
             allowNull: false,
-            type: DataTypes.INTEGER
         },
         status: {
-            allowNull: false,
-            values: ["waiting", "success", "canceled"],
             type: DataTypes.ENUM,
+            values: ["waiting", "success", "canceled"],
+            allowNull: false,
         },
         transaction_code: {
-            allowNull: false,
             type: DataTypes.STRING,
+            allowNull: false,
         },
         createdAt: {
             type: DataTypes.DATE,
             allowNull: false,
-            field:"created_at"
+            field: "created_at",
         },
         updatedAt: {
             type: DataTypes.DATE,
             allowNull: false,
-            field:"updated_at"
+            field: "updated_at",
         },
     });
-    return Order
+
+    const Users = require("./Users")(sequelize, Sequelize);
+    const Food = require("./Food")(sequelize, Sequelize);
+
+    Order.belongsTo(Users, {
+        foreignKey: "user_id",
+        as: "user",
+    });
+
+    Order.belongsTo(Food, {
+        foreignKey: 'food_id',
+        as: "food",
+    });
+
+    return Order;
 };
