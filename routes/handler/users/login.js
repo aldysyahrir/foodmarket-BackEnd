@@ -18,7 +18,7 @@ module.exports = async (req, res, next) => {
                 status: 'error',
                 key: 'LOGIN',
                 message: validate,
-            })
+            });
         }
 
         const user = await Users.findOne({
@@ -45,7 +45,7 @@ module.exports = async (req, res, next) => {
             });
         }
 
-        req.user = {data: user.dataValues};
+        req.user = { data: user.dataValues };
 
         return next()
 

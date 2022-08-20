@@ -5,11 +5,10 @@ const { Order, Food, Users } = require("../../../models");
 
 module.exports = async (req, res, next) => {
     try {
-        const { food_id, user_id, amount } = req.body
-
+        const { food_id, amount } = req.body
+        const { id } = req.user.data;
         const schema = {
             food_id: "number|empty:false",
-            user_id: "number|empty:false",
             amount: "number|empty:false",
         }
 
@@ -24,7 +23,7 @@ module.exports = async (req, res, next) => {
             });
         }
 
-        const user = await Users.findByPk(user_id);
+        const user = await Users.findByPk(id);
 
         if (!user) {
             return res.status(409).json({
@@ -49,7 +48,7 @@ module.exports = async (req, res, next) => {
 
         const data = {
             food_id,
-            user_id,
+            user_id: id,
             amount,
             status: "waiting",
             transaction_code: transactionCode,
@@ -57,7 +56,7 @@ module.exports = async (req, res, next) => {
 
         const orderData = await Order.create(data);
 
-        req.user = { order: orderData, user, food};
+        req.user = { order: orderData, user, food };
         return next();
 
         // return res.json({
@@ -74,4 +73,4 @@ module.exports = async (req, res, next) => {
         });
 
     }
-}
+};

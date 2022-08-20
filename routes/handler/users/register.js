@@ -61,7 +61,6 @@ module.exports = async (req, res, next) => {
             avatar,
             rules: req.body.rules ?? "user"
         };
-        console.log('data', data)
         const createUsers = await Users.create(data);
 
         req.user = {data: createUsers.dataValues}

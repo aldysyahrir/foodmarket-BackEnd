@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "nodemon ./bin/www",
+    "ngrok": "ngrok http 3000"
   },
   "dependencies": {
     "base64-img": "^1.0.4",
