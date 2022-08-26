@@ -48,29 +48,50 @@ module.exports = async (req, res, next) => {
 
         const password = await bcrypt.hash(req.body.password, 10)
         const { name, email, phone, address, house_number, city } = req.body;
-        const avatar = await saveImage(req.body.avatar, res);
+        await saveImage(req.body.avatar, "users", async (err, filePath) => {
+            if (err) {
+                return res.status(400).json({
+                    status: "error",
+                    message: err.message
+                });
+            }
 
-        const data = {
-            name,
-            email,
-            password,
-            phone,
-            address,
-            house_number,
-            city,
-            avatar,
-            rules: req.body.rules ?? "user"
-        };
-        const createUsers = await Users.create(data);
+            let avatar = "default";
+            if (filePath !== "default") {
 
-        req.user = {data: createUsers.dataValues}
-        return next()
+                const newFilePath = filePath.split('\\').pop().split("/").pop();
+                avatar = `${req.get("host")}/images/users/${newFilePath}`;
+            }
 
-        //   return res.json({
-        //     status: "success",
-        //     key: "REGISTER",
-        //     data: createUsers
-        // });
+            const data = {
+                name,
+                email,
+                password,
+                phone,
+                address,
+                house_number,
+                city,
+                avatar,
+                rules: req.body.rules ?? "user"
+            };
+
+            const attributes = [
+                "id",
+                "name",
+                "email",
+                "phone",
+                "address",
+                "house_number",
+                "city",
+                "avatar",
+                "rules",
+            ];
+
+            const createUsers = await Users.create(data);
+
+            req.user = { data: createUsers.dataValues }
+            return next()
+        });
 
     } catch (error) {
         return res.json({

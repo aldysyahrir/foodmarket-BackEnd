@@ -4,6 +4,7 @@ const get = require("./get");
 const profile = require("./profile");
 const address = require("./address");
 const password = require("./password");
+const refreshToken = require("./refreshTokens");
 
 module.exports = {
     register,
@@ -12,4 +13,5 @@ module.exports = {
     profile,
     address,
     password,
+    refreshToken,
 };

@@ -15,5 +15,6 @@ router.get("/", verifyToken, usersHandler.get);
 router.put("/", verifyToken, usersHandler.profile);
 router.put("/address", verifyToken, usersHandler.address);
 router.put("/password", verifyToken, usersHandler.password);
+router.post("/refresh_token", usersHandler.refreshToken);
 
 module.exports = router;

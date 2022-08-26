@@ -14,7 +14,7 @@ module.exports = async (req, res) => {
             star: "number|empty:false",
             ingredients: "string|empty:false",
             price: "number|empty:false",
-            picture: "string|optional",
+            picture: "string|empty:false",
             popular: "number|optional",
             recommended: "number|optional",
         };
@@ -29,35 +29,46 @@ module.exports = async (req, res) => {
             })
         }
 
-        const picture = await saveImage(req.body.picture, res);
+        await saveImage(req.body.picture, "foods", async (err, filePath) => {
+            if (err) {
+                returnres.status(400).json({
+                    status: "error",
+                    key: "CREATE_FOOD",
+                    message: err.message,
+                });
+            }
 
-        const {
-            title,
-            description,
-            star,
-            ingredients,
-            price,
-            popular,
-            recommended } = req.body
+            const newFilePath = filePath.split('\\').pop().split("/").pop();
+            const picture = `${req.get("host")}/images/foods/${newFilePath}`;
 
-        const data = {
-            title,
-            description,
-            star,
-            ingredients,
-            price,
-            popular: popular ?? 0,
-            recommended: recommended ?? 0,
-            picture
-        }
+            const {
+                title,
+                description,
+                star,
+                ingredients,
+                price,
+                popular,
+                recommended } = req.body
 
-        const foodCreated = await Food.create(data);
+            const data = {
+                title,
+                description,
+                star,
+                ingredients,
+                price,
+                popular: popular ?? 0,
+                recommended: recommended ?? 0,
+                picture
+            }
 
-        return res.json({
-            status: "success",
-            key: "CREATE_FOOD",
-            data: foodCreated
-        })
+            const foodCreated = await Food.create(data);
+
+            return res.json({
+                status: "success",
+                key: "CREATE_FOOD",
+                data: foodCreated
+            })
+        });
 
     } catch (error) {
 
