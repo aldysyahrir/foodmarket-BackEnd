@@ -2,7 +2,33 @@ const { Food } = require("../../../models");
 
 module.exports = async (req, res) => {
     try {
-        const foods = await Food.findAll();
+
+        const { key } = req.query
+
+        let query = {};
+
+        // ASC ( ascending ) mengurutkan dari kecil ke besar
+        // DESC ( descending ) mengurutkan dari besar ke kecil
+
+        if (key === "banner") {
+            query = {
+                order: [['star', 'DESC']]
+            }
+        }
+
+        else if (key === "popular") {
+            query = {
+                order: [['popular', 'DESC']]
+            }
+        }
+
+        else if (key === "recommended") {
+            query = {
+                order: [['recommended', 'DESC']]
+            }
+        }
+
+        const foods = await Food.findAll(query);
 
         if (!foods) {
             return res.status(409).json({

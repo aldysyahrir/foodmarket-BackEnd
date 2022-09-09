@@ -16,7 +16,7 @@ router.get('/', function (req, res, next) {
 });
 
 router.use('/users', userRouter);
-router.use("/food", verifyToken, foodRouter);
+router.use("/foods", foodRouter);
 router.use("/order", verifyToken, orderRouter);
 router.use("/payment", paymentRouter);
 
