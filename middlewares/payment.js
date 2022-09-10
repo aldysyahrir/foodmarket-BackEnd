@@ -10,7 +10,10 @@ module.exports = async (req, res) => {
     try {
         const { order, user, food } = req.user;
 
-        const grossAmount = food.price * order.amount;
+        const totalPrice = food.price * order.amount;
+        const tax = (totalPrice * 10) / 100;
+        const driver = 50000;
+        const grossAmount = totalPrice + tax + driver;
 
         const parameter = {
             transaction_details: {
@@ -31,7 +34,7 @@ module.exports = async (req, res) => {
         return res.json({
             status: "success",
             key: "PAYMENT",
-            data: {...order.dataValues, ...transaction}
+            data: { ...order.dataValues, ...transaction }
         })
     } catch (error) {
         return res.status(500).json({
